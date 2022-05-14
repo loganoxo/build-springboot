@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: build
+server:
+  port: 20880

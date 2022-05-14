@@ -1,0 +1,125 @@
+######################.........系统级别配置............#####################
+server:
+  # 端口
+  port: 10700
+  servlet:
+    context-path: /bs/rule/bank
+## 日志级别配置
+logging:
+  config: file:./log4j2.xml
+  level:
+    root: INFO
+    cn.com.bsfit: INFO
+######################.........sdm决策平台开放配置............#####################
+sd:
+  # 决策平台版本
+  version: 7.17.0
+  # 事件下发方式；subscription：引擎默认订阅事件，distribution：人工将事件分发给引擎
+  event.assign.way: distribution
+  # 事件移动权限
+  event.move.auth: true
+  # 事件字段库单次导入最大行数限制
+  field.lib.upload.maxRow: 2000
+  config:
+    # 引擎心跳事件间隔配置，单位为秒，根据引擎设置的心跳事件设置(最好比引擎设置的时间大,默认为引擎的三倍)
+    engine.heart.interval: 90
+  # 指标相关的配置
+  feature:
+    script:
+      tw:
+        # 设置模板指标生成的脚本默认的时间窗口tw大小
+        defaultValue: 100
+    exclude:
+      # 模板指标中不包含xx天(年等时间单位)中的时间模式。可选值：nature: 自然时间， common:通用时间，比如1天，转成1*24*60*1000毫秒
+      mode: nature
+    ## 时间切片相关的配置
+    timeslice:
+      # 配置最大的时间切片大小
+      max: 1000
+      # ts预留buffer，支持乘法（*）和加法（+）,s:*2表示在计算出来的秒上*2作为脚本的ts。m:+10表示在计算出来的分上加上10分钟作为脚本的ts
+      time.buffer: s:*2,m:*2,h:+1,d:+0,M:+0,y:+0
+    # 单位存储上限默认值
+    unitLimit: "{s:1,m:5,h:10,d:20,M:100,y:500}"
+    # 明细存储总上限
+    detailUpper: 1000
+  topic:
+    # 評級管理配置的topic
+    rate.rateTopic: RateQueue
+  # 枚举库同步任务间隔，默认10分钟执行一次(一次结束到下次开始间隔10分钟)
+  sync.enum.library.task.scan.delay: 600000
+  ## 枚举值上传限制
+  enum.upload:
+    # 最大行数
+    maxRow: 10000
+    # 每个枚举值最大的字符数
+    cellLength: 50
+    clear:
+      # 清除临时表定时任务corn表达式配置,默认为凌晨一点
+      corn: 0 0 1 * * ?
+      # 清除【before】天前当天及当天以前的数据吧
+      before: 2
+  ## 配置zookeeper地址，用于定时任务主从
+  rule:
+    cluster:
+      type: zookeeper
+    zookeeper:
+      connectString: ${zookeeper.connect-string}
+      latchPath: /sdmbank
+  ## 流立方分集群管理配置，配置一级场景和流立方集群schema的映射关系
+  #scene.schema.mapping:
+  #  sceneI: schema1
+  #  sceneII: schema2
+  #  sceneIII: schema2
+  #  sceneIV: schema3
+
+######################.........流立方脚本凭条开放配置............#####################
+script:
+  task:
+    # 脚本定时上下线开关
+    open: false
+    # 脚本定时上下线cron表达式
+    time: 0 * * * * *
+  # 脚本构建验证的远程地址
+  validateUrl: 10.100.1.100:18265
+  # 是否开启swagger
+  swagger.enable : false
+
+######################.........系统枚举开放配置............#####################
+# 枚举管理-枚举库内枚举值数量上限
+sysCfg.enumLimit: 100
+
+######################.........名单平台开放配置............#####################
+#名单服务
+namelist:
+  ##名单管理平台地址
+  base-url: ${namelist.url}${namelist.context-path}
+
+######################.........portal开放配置............#####################
+portal:
+  security:
+    # 订阅用户补充查询权限
+    subscription.authorities: BANK.PARAM.RISKLEVEL.VIEW,STREAMCUBE.SCRIPT,BANK.PARAM.RISKLABEL.VIEW,SDM.RULE.SCORECARD.DETAIL.VIEW,SDM.RULE.MATRIX.DETAIL.VIEW,SDM.RULE.DECISIONTREE.DETAIL.VIEW,SDM.RULE.FORMULA.DETAIL.VIEW,SDM.PARAMETER.WEBSERVICE,SDM.WORKFLOW.SIMULATION.DETAIL
+    permit-urls: /authToken,/rs/search/query,/user/info/*,/login.html,/rs/sd/engine/subscription,
+      /rs/sd/subscribe/simulation/binary/download,/rs/sd/subscribe/assets/download,/pa/openapi,
+      /rs/sd/engine/getEventAliveEngine,/rs/sd/engine/simulation/getEventAliveEngine,
+      /user/info/*,/rs/generalfunction/checkcode,/rs/generalfunction/mailcode,/rs/generalfunction/phonecode,/rs/logo/get,/rs/logo/getinfo,
+      /rs/generalfunction/get,/rs/generalfunction/getCurrentErrorCount,/login.html,/login2.html,/swagger-ui.html,/doc.html
+  # 关闭日志过滤器
+  oper.log.enable: false
+  spring.session.task.scan.enable: true
+## license code配置
+license:
+  server:
+    platform:
+      code: sdm
+
+######################.........其他配置............#####################
+knife4j:
+  # 是否开启swagger
+  enable: true
+  # 开启服务端Cors配置
+  cors: true
+
+model.monitor:
+  # 是否开启模型监控
+  enable: true
