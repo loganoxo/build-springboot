@@ -64,10 +64,8 @@
                     <include>**/*</include>
                 </includes>
                 <excludes>
-                    <!--在jar包中把配置文件都排除-->
-                    <exclude>application*.yml</exclude>
-                    <exclude>log4j2.xml</exclude>
-                    <exclude>default.lic</exclude>
+                    <!--在jar包中把私密的和运行环境无关的文件排除-->
+                    <exclude>config.md</exclude>
                 </excludes>
             </resource>
         </resources>
@@ -175,6 +173,7 @@
                 </executions>
                 <!--设置生成的jar包里META-INF/MANIFEST.MF 清单文件里的内容-->
                 <configuration>
+                    <!--                    <finalName>build-user</finalName>-->
                     <archive>
                         <manifest>
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
@@ -184,6 +183,12 @@
                         </manifestEntries>
                         <addMavenDescriptor>false</addMavenDescriptor>
                     </archive>
+                    <excludes>
+                        <!--在jar包中把配置文件排除，后面放在jar外部-->
+                        <exclude>application*.yml</exclude>
+                        <exclude>log4j2.xml</exclude>
+                        <exclude>default.lic</exclude>
+                    </excludes>
                 </configuration>
             </plugin>
 
@@ -194,7 +199,7 @@
                 <executions>
                     <execution>
                         <id>attach-sources</id>
-                        <phase>verify</phase>
+                        <phase>package</phase>
                         <goals>
                             <goal>jar-no-fork</goal>
                         </goals>
